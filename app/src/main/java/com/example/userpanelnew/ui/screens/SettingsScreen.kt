@@ -223,6 +223,62 @@ fun SettingsScreen(
                     )
                 }
             }
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // Logout Section
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Default.ExitToApp,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Account",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Text(
+                        text = "Sign out of your account and return to the login screen",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f)
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Button(
+                        onClick = { viewModel.logout() },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Icon(
+                            Icons.Default.ExitToApp,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Logout")
+                    }
+                }
+            }
         }
     }
 }

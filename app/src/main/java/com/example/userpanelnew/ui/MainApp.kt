@@ -17,6 +17,7 @@ import com.example.userpanelnew.ui.auth.RegisterScreen
 import com.example.userpanelnew.ui.components.PermissionDialog
 import com.example.userpanelnew.ui.screens.*
 import com.example.userpanelnew.viewmodels.MainViewModel
+import androidx.compose.ui.Alignment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,76 +63,10 @@ fun MainApp() {
             )
         }
     } else {
-        // Main app with Navigation Rail
+        // Main app with Bottom Navigation Bar
         var selectedScreen by remember { mutableStateOf<Screen>(Screen.Home) }
         
-        Row(modifier = Modifier.fillMaxSize()) {
-            // Navigation Rail
-            NavigationRail(
-                modifier = Modifier.fillMaxHeight(),
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // App Logo/Title
-                NavigationRailItem(
-                    selected = false,
-                    onClick = { },
-                    icon = {
-                        Icon(
-                            Icons.Default.Home,
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp)
-                        )
-                    },
-                    label = { Text("Bus Tracker") },
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Navigation items
-                NavigationRailItem(
-                    selected = selectedScreen == Screen.Home,
-                    onClick = { selectedScreen = Screen.Home },
-                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                    label = { Text(Screen.Home.title) }
-                )
-                
-                NavigationRailItem(
-                    selected = selectedScreen == Screen.Stops,
-                    onClick = { selectedScreen = Screen.Stops },
-                    icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
-                    label = { Text(Screen.Stops.title) }
-                )
-                
-                NavigationRailItem(
-                    selected = selectedScreen == Screen.Profile,
-                    onClick = { selectedScreen = Screen.Profile },
-                    icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                    label = { Text(Screen.Profile.title) }
-                )
-                
-                NavigationRailItem(
-                    selected = selectedScreen == Screen.Settings,
-                    onClick = { selectedScreen = Screen.Settings },
-                    icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-                    label = { Text(Screen.Settings.title) }
-                )
-                
-                Spacer(modifier = Modifier.weight(1f))
-                
-                // Logout button at bottom
-                NavigationRailItem(
-                    selected = false,
-                    onClick = { viewModel.logout() },
-                    icon = { Icon(Icons.Default.ExitToApp, contentDescription = null) },
-                    label = { Text("Logout") }
-                )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            
+        Column(modifier = Modifier.fillMaxSize()) {
             // Content area
             Box(
                 modifier = Modifier
@@ -145,6 +80,55 @@ fun MainApp() {
                     Screen.Settings -> SettingsScreen(viewModel = viewModel)
                     else -> HomeScreen(viewModel = viewModel)
                 }
+                
+                // Floating Action Button for quick logout
+                FloatingActionButton(
+                    onClick = { viewModel.logout() },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp),
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                ) {
+                    Icon(
+                        Icons.Default.ExitToApp,
+                        contentDescription = "Logout"
+                    )
+                }
+            }
+            
+            // Bottom Navigation Bar
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ) {
+                // Navigation items
+                NavigationBarItem(
+                    selected = selectedScreen == Screen.Home,
+                    onClick = { selectedScreen = Screen.Home },
+                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
+                    label = { Text(Screen.Home.title) }
+                )
+                
+                NavigationBarItem(
+                    selected = selectedScreen == Screen.Stops,
+                    onClick = { selectedScreen = Screen.Stops },
+                    icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
+                    label = { Text(Screen.Stops.title) }
+                )
+                
+                NavigationBarItem(
+                    selected = selectedScreen == Screen.Profile,
+                    onClick = { selectedScreen = Screen.Profile },
+                    icon = { Icon(Icons.Default.Person, contentDescription = null) },
+                    label = { Text(Screen.Profile.title) }
+                )
+                
+                NavigationBarItem(
+                    selected = selectedScreen == Screen.Settings,
+                    onClick = { selectedScreen = Screen.Settings },
+                    icon = { Icon(Icons.Default.Settings, contentDescription = null) },
+                    label = { Text(Screen.Settings.title) }
+                )
             }
         }
     }
