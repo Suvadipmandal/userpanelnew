@@ -42,72 +42,120 @@ class MainViewModel : ViewModel() {
     val locationPermissionGranted: StateFlow<Boolean> = _locationPermissionGranted.asStateFlow()
     
     init {
-        loadDummyData()
+        try {
+            loadDummyData()
+        } catch (e: Exception) {
+            // Handle initialization error gracefully
+        }
     }
     
     private fun loadDummyData() {
         viewModelScope.launch {
-            _buses.value = repository.getBusesWithDelay()
-            _busStops.value = repository.getBusStopsWithDelay()
+            try {
+                _buses.value = repository.getBusesWithDelay()
+                _busStops.value = repository.getBusStopsWithDelay()
+            } catch (e: Exception) {
+                // Handle data loading error gracefully
+                _buses.value = emptyList()
+                _busStops.value = emptyList()
+            }
         }
     }
     
     fun login(email: String, password: String): Boolean {
-        // Simple dummy authentication
-        if (email.isNotEmpty() && password.isNotEmpty()) {
-            _currentUser.value = repository.getDummyUser()
-            _isLoggedIn.value = true
-            return true
+        return try {
+            // Simple dummy authentication
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                _currentUser.value = repository.getDummyUser()
+                _isLoggedIn.value = true
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
         }
-        return false
     }
     
     fun register(name: String, email: String, phone: String, password: String): Boolean {
-        // Simple dummy registration
-        if (name.isNotEmpty() && email.isNotEmpty() && phone.isNotEmpty() && password.isNotEmpty()) {
-            _currentUser.value = User(
-                id = "USER${System.currentTimeMillis()}",
-                name = name,
-                email = email,
-                phone = phone
-            )
-            _isLoggedIn.value = true
-            return true
+        return try {
+            // Simple dummy registration
+            if (name.isNotEmpty() && email.isNotEmpty() && phone.isNotEmpty() && password.isNotEmpty()) {
+                _currentUser.value = User(
+                    id = "USER${System.currentTimeMillis()}",
+                    name = name,
+                    email = email,
+                    phone = phone
+                )
+                _isLoggedIn.value = true
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
         }
-        return false
     }
     
     fun logout() {
-        _isLoggedIn.value = false
-        _currentUser.value = null
-        _selectedBus.value = null
+        try {
+            _isLoggedIn.value = false
+            _currentUser.value = null
+            _selectedBus.value = null
+        } catch (e: Exception) {
+            // Handle logout error gracefully
+        }
     }
     
     fun selectBus(bus: Bus) {
-        _selectedBus.value = bus
+        try {
+            _selectedBus.value = bus
+        } catch (e: Exception) {
+            // Handle bus selection error gracefully
+        }
     }
     
     fun clearSelectedBus() {
-        _selectedBus.value = null
+        try {
+            _selectedBus.value = null
+        } catch (e: Exception) {
+            // Handle clear error gracefully
+        }
     }
     
     fun setLanguage(language: AppLanguage) {
-        _currentLanguage.value = language
+        try {
+            _currentLanguage.value = language
+        } catch (e: Exception) {
+            // Handle language change error gracefully
+        }
     }
     
     fun setLocationPermission(granted: Boolean) {
-        _locationPermissionGranted.value = granted
+        try {
+            _locationPermissionGranted.value = granted
+        } catch (e: Exception) {
+            // Handle permission change error gracefully
+        }
     }
     
     fun refreshBuses() {
         viewModelScope.launch {
-            _buses.value = repository.getBusesWithDelay()
+            try {
+                _buses.value = repository.getBusesWithDelay()
+            } catch (e: Exception) {
+                // Handle refresh error gracefully
+            }
         }
     }
     
     fun refreshBusStops() {
         viewModelScope.launch {
-            _busStops.value = repository.getBusStopsWithDelay()
+            try {
+                _busStops.value = repository.getBusStopsWithDelay()
+            } catch (e: Exception) {
+                // Handle refresh error gracefully
+            }
         }
     }
 }

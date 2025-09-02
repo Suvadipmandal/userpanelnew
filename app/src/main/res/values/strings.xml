@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">user panel new</string>
+    <string name="mapbox_access_token">PASTE_YOUR_MAPBOX_PUBLIC_TOKEN_HERE</string>
 </resources>

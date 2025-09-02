@@ -12,11 +12,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.userpanelnew.models.Bus
 import com.example.userpanelnew.ui.components.BusBottomSheet
+import com.example.userpanelnew.ui.components.MapboxMapScreen
+import com.example.userpanelnew.utils.LocationHelper
 import com.example.userpanelnew.viewmodels.MainViewModel
+import com.mapbox.geojson.Point
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,64 +31,22 @@ fun HomeScreen(
 ) {
     val buses by viewModel.buses.collectAsState()
     val selectedBus by viewModel.selectedBus.collectAsState()
+    val context = LocalContext.current
+    val locationHelper = remember { LocationHelper(context) }
+    val scope = rememberCoroutineScope()
+    
+    var shouldCenterOnUser by remember { mutableStateOf(false) }
     
     Box(modifier = modifier.fillMaxSize()) {
-        // Placeholder Map View (simplified for now)
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0xFFE3F2FD))
-        ) {
-            // Map placeholder
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    Icons.Default.LocationOn,
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = Color(0xFF1976D2)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Map View",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = Color(0xFF1976D2)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Mapbox integration will be available here",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF1976D2)
-                )
-            }
-            
-            // Bus markers overlay (simplified)
-            buses.forEachIndexed { index, bus ->
-                val x = (100 + index * 80).dp
-                val y = (200 + index * 60).dp
-                
-                Box(
-                    modifier = Modifier
-                        .offset(x = x, y = y)
-                        .size(40.dp)
-                        .background(
-                            color = Color(0xFFFF5722),
-                            shape = MaterialTheme.shapes.small
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "🚌",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
-        }
+        // ACTUAL MAPBOX MAP - Replace placeholder
+        MapboxMapScreen(
+            buses = buses,
+            selectedBus = selectedBus,
+            onBusSelected = { bus -> viewModel.selectBus(bus) },
+            shouldCenterOnUser = shouldCenterOnUser,
+            onLocationCentered = { shouldCenterOnUser = false },
+            modifier = Modifier.fillMaxSize()
+        )
         
         // FAB for refresh
         FloatingActionButton(
@@ -95,9 +58,16 @@ fun HomeScreen(
             Icon(Icons.Default.Refresh, contentDescription = "Refresh")
         }
         
-        // Location FAB
+        // Location FAB - Now functional
         FloatingActionButton(
-            onClick = { /* Location functionality */ },
+            onClick = { 
+                scope.launch {
+                    val currentLocation = locationHelper.getCurrentLocation()
+                    if (currentLocation != null) {
+                        shouldCenterOnUser = true
+                    }
+                }
+            },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)

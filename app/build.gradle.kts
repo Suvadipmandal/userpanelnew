@@ -16,6 +16,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // 16 KB page size compatibility
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        }
     }
 
     buildTypes {
@@ -27,6 +32,14 @@ android {
             )
         }
     }
+    
+    // 16 KB page size compatibility
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
+    
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -56,8 +69,8 @@ dependencies {
     // Location services
     implementation("com.google.android.gms:play-services-location:21.2.0")
     
-    // Mapbox
-    implementation("com.mapbox.maps:android:10.16.5")
+    // Mapbox - Updated for better 16 KB compatibility
+    implementation("com.mapbox.maps:android:10.18.0")
     
     // ViewModel and LiveData
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
