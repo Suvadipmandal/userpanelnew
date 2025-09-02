@@ -36,17 +36,53 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     
     var shouldCenterOnUser by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    
+    // Filter buses based on search query
+    val filteredBuses = remember(buses, searchQuery) {
+        if (searchQuery.isEmpty()) {
+            buses
+        } else {
+            buses.filter { bus ->
+                bus.id.contains(searchQuery, ignoreCase = true) ||
+                bus.route.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
     
     Box(modifier = modifier.fillMaxSize()) {
         // ACTUAL MAPBOX MAP - Replace placeholder
+
         MapboxMapScreen(
-            buses = buses,
+            buses = filteredBuses,
             selectedBus = selectedBus,
             onBusSelected = { bus -> viewModel.selectBus(bus) },
             shouldCenterOnUser = shouldCenterOnUser,
             onLocationCentered = { shouldCenterOnUser = false },
             modifier = Modifier.fillMaxSize()
         )
+        
+        // Search Bar Overlay
+        Card(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(16.dp)
+                .fillMaxWidth(0.9f),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = { Text("Search buses or routes...") },
+                leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Search") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                )
+            )
+        }
         
         // FAB for refresh
         FloatingActionButton(
@@ -76,7 +112,7 @@ fun HomeScreen(
         }
         
         // Bus list overlay
-        if (buses.isNotEmpty()) {
+        if (filteredBuses.isNotEmpty()) {
             Card(
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -97,7 +133,7 @@ fun HomeScreen(
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(buses.take(3)) { bus ->
+                        items(filteredBuses.take(3)) { bus ->
                             BusListItem(
                                 bus = bus,
                                 onClick = { viewModel.selectBus(bus) }

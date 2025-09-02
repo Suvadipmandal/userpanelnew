@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Alignment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.userpanelnew.navigation.Screen
 import com.example.userpanelnew.ui.auth.LoginScreen
@@ -17,7 +18,6 @@ import com.example.userpanelnew.ui.auth.RegisterScreen
 import com.example.userpanelnew.ui.components.PermissionDialog
 import com.example.userpanelnew.ui.screens.*
 import com.example.userpanelnew.viewmodels.MainViewModel
-import androidx.compose.ui.Alignment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,6 +28,24 @@ fun MainApp() {
     
     val context = LocalContext.current
     
+    // Check actual permission status on startup
+    LaunchedEffect(Unit) {
+        // Check if permissions are already granted by the system
+        val hasFineLocation = androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        
+        val hasCoarseLocation = androidx.core.content.ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        
+        if (hasFineLocation || hasCoarseLocation) {
+            viewModel.setLocationPermission(true)
+        }
+    }
+    
     // Permission launcher
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -37,11 +55,23 @@ fun MainApp() {
         viewModel.setLocationPermission(locationGranted)
     }
     
-    // Show permission dialog when app starts
-    LaunchedEffect(Unit) {
+    // Show permission dialog only if permissions are not granted
+    LaunchedEffect(locationPermissionGranted) {
         if (!locationPermissionGranted) {
-            // Show permission dialog after a short delay
-            kotlinx.coroutines.delay(500)
+            // Check again to make sure we have the latest permission status
+            val hasFineLocation = androidx.core.content.ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            
+            val hasCoarseLocation = androidx.core.content.ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            
+            if (hasFineLocation || hasCoarseLocation) {
+                viewModel.setLocationPermission(true)
+            }
         }
     }
     

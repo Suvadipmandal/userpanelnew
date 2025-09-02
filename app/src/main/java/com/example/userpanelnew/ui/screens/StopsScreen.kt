@@ -24,6 +24,22 @@ fun StopsScreen(
     modifier: Modifier = Modifier
 ) {
     val busStops by viewModel.busStops.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
+    
+    // Filter bus stops based on search query
+    val filteredBusStops = remember(busStops, searchQuery) {
+        if (searchQuery.isEmpty()) {
+            busStops
+        } else {
+            busStops.filter { busStop ->
+                busStop.name.contains(searchQuery, ignoreCase = true) ||
+                busStop.buses.any { busETA ->
+                    busETA.busId.contains(searchQuery, ignoreCase = true) ||
+                    busETA.route.contains(searchQuery, ignoreCase = true)
+                }
+            }
+        }
+    }
     
     Column(
         modifier = modifier.fillMaxSize()
@@ -38,22 +54,64 @@ fun StopsScreen(
             }
         )
         
-        if (busStops.isEmpty()) {
+        // Search Bar
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            placeholder = { Text("Search stops, buses, or routes...") },
+            leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Search") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            singleLine = true,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline
+            )
+        )
+        
+        if (filteredBusStops.isEmpty()) {
             // Loading or empty state
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                if (busStops.isEmpty()) {
+                    CircularProgressIndicator()
+                } else {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            Icons.Default.LocationOn,
+                            contentDescription = null,
+                            modifier = Modifier.size(64.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = if (searchQuery.isEmpty()) "No stops found" else "No stops match your search",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        if (searchQuery.isNotEmpty()) {
+                            Text(
+                                text = "Try searching for different terms",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
             }
         } else {
-            // List of bus stops
+            // List of filtered bus stops
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(busStops) { busStop ->
+                items(filteredBusStops) { busStop ->
                     BusStopCard(busStop = busStop)
                 }
             }
