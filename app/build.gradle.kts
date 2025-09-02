@@ -64,21 +64,21 @@ dependencies {
     implementation(libs.androidx.material3)
     
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation(libs.androidx.navigation.compose)
     
     // Location services
-    implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation(libs.google.play.services.location)
     
     // Mapbox - Updated for better 16 KB compatibility
-    implementation("com.mapbox.maps:android:10.18.0")
+    implementation(libs.mapbox.maps)
     
     // ViewModel and LiveData
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.0")
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
     
     // Testing
     testImplementation(libs.junit)

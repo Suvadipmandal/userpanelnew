@@ -2,14 +2,18 @@ package com.example.userpanelnew.ui
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.userpanelnew.navigation.Screen
@@ -106,58 +110,160 @@ fun MainApp() {
                 when (selectedScreen) {
                     Screen.Home -> HomeScreen(viewModel = viewModel)
                     Screen.Stops -> StopsScreen(viewModel = viewModel)
-                    Screen.Profile -> ProfileScreen(viewModel = viewModel)
-                    Screen.Settings -> SettingsScreen(viewModel = viewModel)
+                    Screen.NearbyBuses -> NearbyBusesScreen(
+                        viewModel = viewModel,
+                        onNavigateToHome = { selectedScreen = Screen.Home }
+                    )
+                    Screen.ProfileSettings -> ProfileSettingsScreen(viewModel = viewModel)
                     else -> HomeScreen(viewModel = viewModel)
                 }
                 
-                // Floating Action Button for quick logout
-                FloatingActionButton(
-                    onClick = { viewModel.logout() },
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(16.dp),
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError
-                ) {
-                    Icon(
-                        Icons.Default.ExitToApp,
-                        contentDescription = "Logout"
-                    )
-                }
+
             }
             
-            // Bottom Navigation Bar
+            // Enhanced Bottom Navigation Bar
             NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.98f),
+                tonalElevation = 12.dp,
+                modifier = Modifier
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.08f),
+                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                    )
+                    .padding(top = 4.dp)
             ) {
                 // Navigation items
                 NavigationBarItem(
                     selected = selectedScreen == Screen.Home,
                     onClick = { selectedScreen = Screen.Home },
-                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                    label = { Text(Screen.Home.title) }
+                    icon = { 
+                        Icon(
+                            Icons.Default.Home, 
+                            contentDescription = null,
+                            modifier = Modifier.size(26.dp)
+                        ) 
+                    },
+                    label = { 
+                        Text(
+                            text = Screen.Home.title,
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = if (selectedScreen == Screen.Home) FontWeight.SemiBold else FontWeight.Medium,
+                                letterSpacing = 0.1.sp
+                            ),
+                            color = if (selectedScreen == Screen.Home) 
+                                MaterialTheme.colorScheme.primary 
+                            else 
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(top = 2.dp)
+                        ) 
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                    )
                 )
                 
                 NavigationBarItem(
                     selected = selectedScreen == Screen.Stops,
                     onClick = { selectedScreen = Screen.Stops },
-                    icon = { Icon(Icons.Default.LocationOn, contentDescription = null) },
-                    label = { Text(Screen.Stops.title) }
+                    icon = { 
+                        Icon(
+                            Icons.Default.LocationOn, 
+                            contentDescription = null,
+                            modifier = Modifier.size(26.dp)
+                        ) 
+                    },
+                    label = { 
+                        Text(
+                            text = Screen.Stops.title,
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = if (selectedScreen == Screen.Stops) FontWeight.SemiBold else FontWeight.Medium,
+                                letterSpacing = 0.1.sp
+                            ),
+                            color = if (selectedScreen == Screen.Stops) 
+                                MaterialTheme.colorScheme.primary 
+                            else 
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(top = 2.dp)
+                        ) 
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                    )
                 )
                 
                 NavigationBarItem(
-                    selected = selectedScreen == Screen.Profile,
-                    onClick = { selectedScreen = Screen.Profile },
-                    icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                    label = { Text(Screen.Profile.title) }
+                    selected = selectedScreen == Screen.NearbyBuses,
+                    onClick = { selectedScreen = Screen.NearbyBuses },
+                    icon = { 
+                        Icon(
+                            Icons.Default.LocationOn, 
+                            contentDescription = null,
+                            modifier = Modifier.size(26.dp)
+                        ) 
+                    },
+                    label = { 
+                        Text(
+                            text = Screen.NearbyBuses.title,
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = if (selectedScreen == Screen.NearbyBuses) FontWeight.SemiBold else FontWeight.Medium,
+                                letterSpacing = 0.1.sp
+                            ),
+                            color = if (selectedScreen == Screen.NearbyBuses) 
+                                MaterialTheme.colorScheme.primary 
+                            else 
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(top = 2.dp)
+                        ) 
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                    )
                 )
                 
                 NavigationBarItem(
-                    selected = selectedScreen == Screen.Settings,
-                    onClick = { selectedScreen = Screen.Settings },
-                    icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-                    label = { Text(Screen.Settings.title) }
+                    selected = selectedScreen == Screen.ProfileSettings,
+                    onClick = { selectedScreen = Screen.ProfileSettings },
+                    icon = { 
+                        Icon(
+                            Icons.Default.Person, 
+                            contentDescription = null,
+                            modifier = Modifier.size(26.dp)
+                        ) 
+                    },
+                    label = { 
+                        Text(
+                            text = Screen.ProfileSettings.title,
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = if (selectedScreen == Screen.ProfileSettings) FontWeight.SemiBold else FontWeight.Medium,
+                                letterSpacing = 0.1.sp
+                            ),
+                            color = if (selectedScreen == Screen.ProfileSettings) 
+                                MaterialTheme.colorScheme.primary 
+                            else 
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(top = 2.dp)
+                        ) 
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                    )
                 )
             }
         }

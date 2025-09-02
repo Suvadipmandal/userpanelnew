@@ -5,8 +5,8 @@ sealed class Screen(val route: String, val title: String) {
     object Register : Screen("register", "Register")
     object Home : Screen("home", "Home")
     object Stops : Screen("stops", "Stops & ETA")
-    object Profile : Screen("profile", "Profile")
-    object Settings : Screen("settings", "Settings")
+    object NearbyBuses : Screen("nearby_buses", "Nearby Buses")
+    object ProfileSettings : Screen("profile_settings", "Profile & Settings")
 }
 
 sealed class AuthScreen(val route: String) {

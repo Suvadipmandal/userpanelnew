@@ -1,12 +1,17 @@
 package com.example.userpanelnew.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -62,39 +67,122 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize()
         )
         
-        // Search Bar Overlay
+        // Compact and Elegant Search Bar
         Card(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(16.dp)
-                .fillMaxWidth(0.9f),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                .padding(top = 24.dp, start = 24.dp, end = 24.dp)
+                .fillMaxWidth(0.78f)
+                .background(
+                    MaterialTheme.colorScheme.surface.copy(alpha = 0.05f),
+                    RoundedCornerShape(28.dp)
+                ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f)
+            ),
+            shape = RoundedCornerShape(28.dp),
+            border = androidx.compose.foundation.BorderStroke(
+                width = 0.8.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.06f)
+            )
         ) {
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
-                placeholder = { Text("Search buses or routes...") },
-                leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Search") },
-                modifier = Modifier.fillMaxWidth(),
+                placeholder = { 
+                    Text(
+                        "Search buses or routes...",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Medium
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                    ) 
+                },
+                leadingIcon = { 
+                    Icon(
+                        Icons.Default.Search, 
+                        contentDescription = "Search",
+                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
+                        modifier = Modifier.size(22.dp)
+                    ) 
+                },
+                trailingIcon = {
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(
+                            onClick = { searchQuery = "" },
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Clear,
+                                contentDescription = "Clear search",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 singleLine = true,
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium
+                ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                )
+                    focusedBorderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f),
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    cursorColor = MaterialTheme.colorScheme.primary
+                ),
+                shape = RoundedCornerShape(20.dp)
             )
         }
         
-        // FAB for refresh
+        // Enhanced FAB for refresh
         FloatingActionButton(
             onClick = { viewModel.refreshBuses() },
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(16.dp)
+                .padding(top = 24.dp, end = 24.dp),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 8.dp,
+                pressedElevation = 12.dp
+            ),
+            shape = RoundedCornerShape(20.dp)
         ) {
-            Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+            Icon(
+                Icons.Default.Refresh, 
+                contentDescription = "Refresh",
+                modifier = Modifier.size(24.dp)
+            )
         }
         
-        // Location FAB - Now functional
+        // Enhanced Logout FAB
+        FloatingActionButton(
+            onClick = { viewModel.logout() },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 24.dp, start = 24.dp),
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 8.dp,
+                pressedElevation = 12.dp
+            ),
+            shape = RoundedCornerShape(20.dp)
+        ) {
+            Icon(
+                Icons.AutoMirrored.Filled.ExitToApp, 
+                contentDescription = "Logout",
+                modifier = Modifier.size(24.dp)
+            )
+        }
+        
+        // Enhanced Location FAB
         FloatingActionButton(
             onClick = { 
                 scope.launch {
@@ -106,43 +194,23 @@ fun HomeScreen(
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
+                .padding(20.dp),
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 8.dp,
+                pressedElevation = 12.dp
+            ),
+            shape = RoundedCornerShape(20.dp)
         ) {
-            Icon(Icons.Default.LocationOn, contentDescription = "My Location")
+            Icon(
+                Icons.Default.LocationOn, 
+                contentDescription = "My Location",
+                modifier = Modifier.size(24.dp)
+            )
         }
         
-        // Bus list overlay
-        if (filteredBuses.isNotEmpty()) {
-            Card(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(16.dp)
-                    .width(280.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Nearby Buses",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(filteredBuses.take(3)) { bus ->
-                            BusListItem(
-                                bus = bus,
-                                onClick = { viewModel.selectBus(bus) }
-                            )
-                        }
-                    }
-                }
-            }
-        }
+
     }
     
     // Bus Bottom Sheet
