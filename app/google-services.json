@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "23991952685",
+    "firebase_url": "https://dummydev-cb448-default-rtdb.firebaseio.com",
+    "project_id": "dummydev-cb448",
+    "storage_bucket": "dummydev-cb448.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23991952685:android:f75df25be1181577eb9fa4",
+        "android_client_info": {
+          "package_name": "com.example.busdriverpanel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkUusEej2vlYMWjdSivHv4T4sF8fiF9FU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23991952685:android:e695ee2816fbe6f2eb9fa4",
+        "android_client_info": {
+          "package_name": "com.example.userpanelnew"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkUusEej2vlYMWjdSivHv4T4sF8fiF9FU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -92,7 +92,7 @@ fun HomeScreen(
                 onValueChange = { searchQuery = it },
                 placeholder = { 
                     Text(
-                        "Search buses or routes...",
+                        "Search for bus or stop...",
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Medium
                         ),
@@ -154,11 +154,11 @@ fun HomeScreen(
             ),
             shape = RoundedCornerShape(20.dp)
         ) {
-            Icon(
-                Icons.Default.Refresh, 
-                contentDescription = "Refresh",
-                modifier = Modifier.size(24.dp)
-            )
+                            Icon(
+                    Icons.Default.Refresh,
+                    contentDescription = "Refresh",
+                    modifier = Modifier.size(24.dp)
+                )
         }
         
         // Enhanced Logout FAB
@@ -175,11 +175,11 @@ fun HomeScreen(
             ),
             shape = RoundedCornerShape(20.dp)
         ) {
-            Icon(
-                Icons.AutoMirrored.Filled.ExitToApp, 
-                contentDescription = "Logout",
-                modifier = Modifier.size(24.dp)
-            )
+                            Icon(
+                    Icons.AutoMirrored.Filled.ExitToApp,
+                    contentDescription = "Logout",
+                    modifier = Modifier.size(24.dp)
+                )
         }
         
         // Enhanced Location FAB

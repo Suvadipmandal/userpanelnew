@@ -46,5 +46,8 @@ data class Location(
 enum class AppLanguage(val displayName: String, val code: String) {
     ENGLISH("English", "en"),
     HINDI("हिंदी", "hi"),
-    GUJARATI("ગુજરાતી", "gu")
+    GUJARATI("ગુજરાતી", "gu"),
+    MARATHI("मराठी", "mr"),
+    TELUGU("తెలుగు", "te"),
+    BENGALI("বাংলা", "bn")
 }

@@ -15,6 +15,19 @@ import com.example.userpanelnew.ui.theme.UserPanelNewTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Set up global exception handler for debugging
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            android.util.Log.e("MainActivity", "Uncaught exception in thread ${thread.name}: ${throwable.message}", throwable)
+            throwable.printStackTrace()
+            
+            // Don't crash the app for non-fatal exceptions
+            if (throwable is OutOfMemoryError || throwable is SecurityException) {
+                // These are fatal exceptions that should crash the app
+                throw throwable
+            }
+        }
+        
         enableEdgeToEdge()
         setContent {
             UserPanelNewTheme {

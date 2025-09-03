@@ -29,8 +29,18 @@ fun MainApp() {
     val viewModel: MainViewModel = viewModel()
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
     val locationPermissionGranted by viewModel.locationPermissionGranted.collectAsState()
+    val currentLanguage by viewModel.currentLanguage.collectAsState()
     
     val context = LocalContext.current
+    
+    // Language change handling - temporarily disabled to prevent crashes
+    LaunchedEffect(Unit) {
+        viewModel.setLanguageChangeCallback { language ->
+            // TODO: Implement language change without activity restart
+            // For now, just log the language change
+            println("Language changed to: ${language.displayName}")
+        }
+    }
     
     // Check actual permission status on startup
     LaunchedEffect(Unit) {
@@ -146,7 +156,7 @@ fun MainApp() {
                     },
                     label = { 
                         Text(
-                            text = Screen.Home.title,
+                            text = "Home",
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = if (selectedScreen == Screen.Home) FontWeight.SemiBold else FontWeight.Medium,
                                 letterSpacing = 0.1.sp
@@ -179,7 +189,7 @@ fun MainApp() {
                     },
                     label = { 
                         Text(
-                            text = Screen.Stops.title,
+                            text = "Stops",
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = if (selectedScreen == Screen.Stops) FontWeight.SemiBold else FontWeight.Medium,
                                 letterSpacing = 0.1.sp
@@ -212,7 +222,7 @@ fun MainApp() {
                     },
                     label = { 
                         Text(
-                            text = Screen.NearbyBuses.title,
+                            text = "Nearby Buses",
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = if (selectedScreen == Screen.NearbyBuses) FontWeight.SemiBold else FontWeight.Medium,
                                 letterSpacing = 0.1.sp
@@ -245,7 +255,7 @@ fun MainApp() {
                     },
                     label = { 
                         Text(
-                            text = Screen.ProfileSettings.title,
+                            text = "Profile & Settings",
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = if (selectedScreen == Screen.ProfileSettings) FontWeight.SemiBold else FontWeight.Medium,
                                 letterSpacing = 0.1.sp

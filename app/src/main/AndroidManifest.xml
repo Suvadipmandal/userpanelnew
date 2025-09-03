@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".UserPanelApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.UserPanelNew">
         
-        <!-- Mapbox Access Token -->
+        <!-- Mapbox Public API Key -->
         <meta-data
             android:name="com.mapbox.token"
             android:value="pk.eyJ1Ijoic3V2YWRpcDEyMzM0IiwiYSI6ImNtZjFqeWlheDFvMGYybHF5dmpsc3o5MHYifQ.yk4ewfwl_81A9KGga7wIMA" />

@@ -147,7 +147,7 @@ fun NearbyBusesScreen(
                         // Show tracking message and navigate to home
                         scope.launch {
                             snackbarHostState.showSnackbar(
-                                message = "🚌 Now tracking Bus ${bus.number}",
+                                message = "Bus tracked!",
                                 duration = SnackbarDuration.Short
                             )
                         }
@@ -288,7 +288,7 @@ fun BusCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Track Bus",
+                                                    text = "Track Bus",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium
                     )

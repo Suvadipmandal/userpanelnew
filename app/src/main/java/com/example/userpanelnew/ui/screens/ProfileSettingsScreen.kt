@@ -36,33 +36,33 @@ fun ProfileSettingsScreen(
             Tab(
                 selected = selectedTab == 0,
                 onClick = { selectedTab = 0 },
-                text = { 
+                text = {
                     Text(
                         "Profile",
                         fontWeight = if (selectedTab == 0) FontWeight.SemiBold else FontWeight.Normal
-                    ) 
+                    )
                 },
-                icon = { 
+                icon = {
                     Icon(
                         Icons.Default.Person,
                         contentDescription = "Profile"
-                    ) 
+                    )
                 }
             )
             Tab(
                 selected = selectedTab == 1,
                 onClick = { selectedTab = 1 },
-                text = { 
+                text = {
                     Text(
                         "Settings",
                         fontWeight = if (selectedTab == 1) FontWeight.SemiBold else FontWeight.Normal
-                    ) 
+                    )
                 },
-                icon = { 
+                icon = {
                     Icon(
                         Icons.Default.Settings,
                         contentDescription = "Settings"
-                    ) 
+                    )
                 }
             )
         }
@@ -117,11 +117,11 @@ fun ProfileTab(currentUser: com.example.userpanelnew.models.User?) {
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold
                             )
-                            Text(
-                                text = "User ID: ${currentUser.id}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                                                               Text(
+                                       text = "User ID: ${currentUser.id}",
+                                       style = MaterialTheme.typography.bodyMedium,
+                                       color = MaterialTheme.colorScheme.onSurfaceVariant
+                                   )
                         }
                     }
                     
@@ -203,10 +203,13 @@ fun SettingsTab(viewModel: MainViewModel) {
                 
                 // Language options
                 listOf(
-                    com.example.userpanelnew.models.AppLanguage.ENGLISH to "English",
-                    com.example.userpanelnew.models.AppLanguage.HINDI to "हिंदी",
-                    com.example.userpanelnew.models.AppLanguage.GUJARATI to "ગુજરાતી"
-                ).forEach { (language, displayName) ->
+                    com.example.userpanelnew.models.AppLanguage.ENGLISH,
+                    com.example.userpanelnew.models.AppLanguage.HINDI,
+                    com.example.userpanelnew.models.AppLanguage.GUJARATI,
+                    com.example.userpanelnew.models.AppLanguage.MARATHI,
+                    com.example.userpanelnew.models.AppLanguage.TELUGU,
+                    com.example.userpanelnew.models.AppLanguage.BENGALI
+                ).forEach { language ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -219,7 +222,7 @@ fun SettingsTab(viewModel: MainViewModel) {
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = displayName,
+                            text = language.displayName,
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }

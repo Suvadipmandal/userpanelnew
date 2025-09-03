@@ -37,6 +37,10 @@ class MainViewModel : ViewModel() {
     private val _currentLanguage = MutableStateFlow(AppLanguage.ENGLISH)
     val currentLanguage: StateFlow<AppLanguage> = _currentLanguage.asStateFlow()
     
+    // Language change callback
+    private var _onLanguageChanged: ((AppLanguage) -> Unit)? = null
+    val onLanguageChanged: ((AppLanguage) -> Unit)? get() = _onLanguageChanged
+    
     // Location permission state
     private val _locationPermissionGranted = MutableStateFlow(false)
     val locationPermissionGranted: StateFlow<Boolean> = _locationPermissionGranted.asStateFlow()
@@ -126,9 +130,23 @@ class MainViewModel : ViewModel() {
     fun setLanguage(language: AppLanguage) {
         try {
             _currentLanguage.value = language
+            _onLanguageChanged?.invoke(language)
         } catch (e: Exception) {
             // Handle language change error gracefully
         }
+    }
+    
+    fun setLanguageChangeCallback(callback: (AppLanguage) -> Unit) {
+        _onLanguageChanged = callback
+    }
+    
+    fun getCurrentLanguage(): AppLanguage {
+        return _currentLanguage.value
+    }
+    
+    fun setLanguageAndRestart(language: AppLanguage) {
+        _currentLanguage.value = language
+        _onLanguageChanged?.invoke(language)
     }
     
     fun setLocationPermission(granted: Boolean) {
