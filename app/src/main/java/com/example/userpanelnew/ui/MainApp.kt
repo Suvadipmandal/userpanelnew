@@ -131,7 +131,7 @@ fun MainApp() {
 
             }
             
-            // Enhanced Bottom Navigation Bar
+            // Enhanced Bottom Navigation Bar with proper text visibility
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.98f),
                 tonalElevation = 12.dp,
@@ -141,17 +141,18 @@ fun MainApp() {
                         color = MaterialTheme.colorScheme.outline.copy(alpha = 0.08f),
                         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
                     )
-                    .padding(top = 4.dp)
+                    .padding(top = 8.dp, bottom = 8.dp)
             ) {
                 // Navigation items
                 NavigationBarItem(
                     selected = selectedScreen == Screen.Home,
                     onClick = { selectedScreen = Screen.Home },
+                    alwaysShowLabel = true,
                     icon = { 
                         Icon(
                             Icons.Default.Home, 
                             contentDescription = null,
-                            modifier = Modifier.size(26.dp)
+                            modifier = Modifier.size(24.dp)
                         ) 
                     },
                     label = { 
@@ -164,8 +165,7 @@ fun MainApp() {
                             color = if (selectedScreen == Screen.Home) 
                                 MaterialTheme.colorScheme.primary 
                             else 
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            modifier = Modifier.padding(top = 2.dp)
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         ) 
                     },
                     colors = NavigationBarItemDefaults.colors(
@@ -180,11 +180,12 @@ fun MainApp() {
                 NavigationBarItem(
                     selected = selectedScreen == Screen.Stops,
                     onClick = { selectedScreen = Screen.Stops },
+                    alwaysShowLabel = true,
                     icon = { 
                         Icon(
                             Icons.Default.LocationOn, 
                             contentDescription = null,
-                            modifier = Modifier.size(26.dp)
+                            modifier = Modifier.size(24.dp)
                         ) 
                     },
                     label = { 
@@ -197,8 +198,7 @@ fun MainApp() {
                             color = if (selectedScreen == Screen.Stops) 
                                 MaterialTheme.colorScheme.primary 
                             else 
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            modifier = Modifier.padding(top = 2.dp)
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         ) 
                     },
                     colors = NavigationBarItemDefaults.colors(
@@ -213,11 +213,12 @@ fun MainApp() {
                 NavigationBarItem(
                     selected = selectedScreen == Screen.NearbyBuses,
                     onClick = { selectedScreen = Screen.NearbyBuses },
+                    alwaysShowLabel = true,
                     icon = { 
                         Icon(
                             Icons.Default.LocationOn, 
                             contentDescription = null,
-                            modifier = Modifier.size(26.dp)
+                            modifier = Modifier.size(24.dp)
                         ) 
                     },
                     label = { 
@@ -230,8 +231,7 @@ fun MainApp() {
                             color = if (selectedScreen == Screen.NearbyBuses) 
                                 MaterialTheme.colorScheme.primary 
                             else 
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            modifier = Modifier.padding(top = 2.dp)
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         ) 
                     },
                     colors = NavigationBarItemDefaults.colors(
@@ -246,16 +246,17 @@ fun MainApp() {
                 NavigationBarItem(
                     selected = selectedScreen == Screen.ProfileSettings,
                     onClick = { selectedScreen = Screen.ProfileSettings },
+                    alwaysShowLabel = true,
                     icon = { 
                         Icon(
                             Icons.Default.Person, 
                             contentDescription = null,
-                            modifier = Modifier.size(26.dp)
+                            modifier = Modifier.size(24.dp)
                         ) 
                     },
                     label = { 
                         Text(
-                            text = "Profile & Settings",
+                            text = "Profile",
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = if (selectedScreen == Screen.ProfileSettings) FontWeight.SemiBold else FontWeight.Medium,
                                 letterSpacing = 0.1.sp
@@ -263,8 +264,7 @@ fun MainApp() {
                             color = if (selectedScreen == Screen.ProfileSettings) 
                                 MaterialTheme.colorScheme.primary 
                             else 
-                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            modifier = Modifier.padding(top = 2.dp)
+                                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         ) 
                     },
                     colors = NavigationBarItemDefaults.colors(

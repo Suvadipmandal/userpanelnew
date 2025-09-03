@@ -6,6 +6,7 @@ sealed class Screen(val route: String, val title: String) {
     object Home : Screen("home", "Home")
     object Stops : Screen("stops", "Stops")
     object NearbyBuses : Screen("nearby_buses", "Nearby Buses")
+    object Map : Screen("map", "Map")
     object ProfileSettings : Screen("profile_settings", "Profile & Settings")
 }
 

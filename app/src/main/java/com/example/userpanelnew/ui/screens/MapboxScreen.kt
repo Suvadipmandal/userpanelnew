@@ -58,7 +58,7 @@ fun MapboxScreen(
                     mapView = this
                     
                     // Load the default Mapbox Streets style using the new API
-                    mapboxMap.loadStyleUri(Style.MAPBOX_STREETS) { style ->
+                    getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) { style ->
                         // Style loaded successfully
                         // You can add custom styling here if needed
                     }

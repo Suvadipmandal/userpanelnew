@@ -80,6 +80,10 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.play.services)
+    
+    // Permissions
+    implementation(libs.accompanist.permissions)
+    
     implementation(libs.firebase.analytics)
 
     // Testing

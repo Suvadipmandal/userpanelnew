@@ -18,14 +18,111 @@ import androidx.compose.ui.viewinterop.AndroidView
 import android.util.Log
 import com.example.userpanelnew.models.Bus
 import com.example.userpanelnew.utils.LocationHelper
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.Style
 
-
 // Logging tag
 private const val TAG = "MapboxMapScreen"
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun MyMapScreen(
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val locationPermissionState = rememberPermissionState(android.Manifest.permission.ACCESS_FINE_LOCATION)
+    val locationHelper = remember { LocationHelper(context) }
+    var mapView by remember { mutableStateOf<MapView?>(null) }
+    var userLocation by remember { mutableStateOf<Point?>(null) }
+    var isMapReady by remember { mutableStateOf(false) }
+    var moveToUserLocation by remember { mutableStateOf(false) }
+
+    // Request location permission on first launch
+    LaunchedEffect(Unit) {
+        if (!locationPermissionState.status.isGranted) {
+            locationPermissionState.launchPermissionRequest()
+        }
+    }
+
+    // Get user location using existing LocationHelper
+    LaunchedEffect(locationPermissionState.status.isGranted) {
+        if (locationPermissionState.status.isGranted) {
+            try {
+                val location = locationHelper.getCurrentLocation()
+                userLocation = location
+            } catch (e: Exception) {
+                Log.e(TAG, "Error getting user location", e)
+                userLocation = locationHelper.getDefaultLocation()
+            }
+        }
+    }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        AndroidView(
+            factory = { ctx ->
+                val options = MapInitOptions(ctx)
+                val view = MapView(ctx, options)
+                mapView = view
+                view.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) {
+                    isMapReady = true
+                }
+                view
+            },
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // FloatingActionButton to center on user location
+        if (userLocation != null && isMapReady) {
+            FloatingActionButton(
+                onClick = {
+                    moveToUserLocation = true
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(24.dp)
+            ) {
+                Icon(Icons.Default.LocationOn, contentDescription = "My Location")
+            }
+        }
+        
+        // User location indicator (simple blue dot)
+        if (userLocation != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(16.dp)
+                    .background(
+                        color = Color.Blue,
+                        shape = CircleShape
+                    )
+            )
+        }
+    }
+
+    // Animate camera to user location when button is pressed
+    if (moveToUserLocation && userLocation != null && isMapReady) {
+        LaunchedEffect(moveToUserLocation) {
+            val mapboxMap = mapView?.getMapboxMap()
+            try {
+                mapboxMap?.setCamera(
+                    CameraOptions.Builder()
+                        .center(userLocation)
+                        .zoom(16.0)
+                        .build()
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Error setting camera", e)
+            }
+            moveToUserLocation = false
+        }
+    }
+}
 
 @Composable
 fun MapboxMapScreen(
@@ -62,12 +159,10 @@ fun MapboxMapScreen(
                 userLocation = locationHelper.getDefaultLocation()
             } catch (fallbackException: Exception) {
                 Log.e(TAG, "Error getting fallback location", fallbackException)
-                // Use a hardcoded fallback location
                 try {
                     userLocation = Point.fromLngLat(0.0, 0.0)
                 } catch (pointException: Exception) {
                     Log.e(TAG, "Error creating hardcoded fallback point", pointException)
-                    // If all else fails, don't set userLocation
                 }
             }
         }
@@ -82,7 +177,7 @@ fun MapboxMapScreen(
                 if (mapboxMap != null) {
                     try {
                         val cameraOptions = try {
-                            com.mapbox.maps.CameraOptions.Builder()
+                            CameraOptions.Builder()
                                 .center(userLocation)
                                 .zoom(15.0)
                                 .build()
@@ -106,7 +201,6 @@ fun MapboxMapScreen(
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error centering map on user location", e)
-                // Handle camera error gracefully
             }
         }
     }
@@ -125,7 +219,6 @@ fun MapboxMapScreen(
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error disposing MapView", e)
-                // Handle cleanup error gracefully
             }
         }
     }
@@ -153,7 +246,6 @@ fun MapboxMapScreen(
                 mapView = view
                 Log.d(TAG, "MapView created successfully, loading style...")
                 
-                // Load style and set camera asynchronously
                 try {
                     val mapboxMap = try {
                         view.getMapboxMap()
@@ -174,7 +266,7 @@ fun MapboxMapScreen(
                             
                             try {
                                 val cameraOptions = try {
-                                    com.mapbox.maps.CameraOptions.Builder()
+                                    CameraOptions.Builder()
                                         .center(initialLocation)
                                         .zoom(12.0)
                                         .build()
@@ -203,7 +295,6 @@ fun MapboxMapScreen(
                 view
             } catch (e: Exception) {
                 Log.e(TAG, "Mapbox initialization error", e)
-                // Return a fallback view if Mapbox fails
                 android.widget.TextView(context).apply {
                     text = "Map loading failed: ${e.message}"
                     setTextColor(android.graphics.Color.RED)
@@ -211,30 +302,22 @@ fun MapboxMapScreen(
                 }
             }
         },
-
         modifier = modifier.fillMaxSize()
     )
     
     // Bus markers overlay
     buses.forEachIndexed { index, bus ->
         val x = (100 + index * 80).dp
-        val y = (200 + index * 60).dp
+        val y = (100 + index * 60).dp
         
         Box(
             modifier = Modifier
                 .offset(x = x, y = y)
-                .size(40.dp)
-                .background(
-                    color = if (bus.id == selectedBus?.id) Color.Red else Color(0xFFFF5722),
-                    shape = CircleShape
-                )
-                .clickable { onBusSelected(bus) },
-            contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "🚌",
-                style = MaterialTheme.typography.titleMedium,
-                fontSize = 20.sp
+            BusMarkerView(
+                bus = bus,
+                isSelected = bus == selectedBus,
+                onClick = { onBusSelected(bus) }
             )
         }
     }
