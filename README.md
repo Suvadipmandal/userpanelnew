@@ -214,6 +214,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-**Built with ❤️ using Jetpack Compose and Material 3**
-
-*Ready for hackathons, production deployment, and real-world usage!*
