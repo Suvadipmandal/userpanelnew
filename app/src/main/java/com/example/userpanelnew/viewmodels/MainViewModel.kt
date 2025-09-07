@@ -1,9 +1,12 @@
 package com.example.userpanelnew.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.userpanelnew.data.DummyDataRepository
 import com.example.userpanelnew.models.*
+import com.example.userpanelnew.services.FirebaseAuthService
+import com.example.userpanelnew.utils.LanguagePreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +15,8 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     
     private val repository = DummyDataRepository()
+    private val firebaseAuthService = FirebaseAuthService()
+    private var languagePreferenceManager: LanguagePreferenceManager? = null
     
     // Authentication state
     private val _isLoggedIn = MutableStateFlow(false)
@@ -45,12 +50,26 @@ class MainViewModel : ViewModel() {
     private val _locationPermissionGranted = MutableStateFlow(false)
     val locationPermissionGranted: StateFlow<Boolean> = _locationPermissionGranted.asStateFlow()
     
+    // Notification permission state
+    private val _notificationPermissionGranted = MutableStateFlow(false)
+    val notificationPermissionGranted: StateFlow<Boolean> = _notificationPermissionGranted.asStateFlow()
+    
     init {
         try {
             loadDummyData()
         } catch (e: Exception) {
             // Handle initialization error gracefully
         }
+    }
+    
+    fun initializeLanguagePreferenceManager(context: Context) {
+        println("MainViewModel: Initializing language preference manager")
+        languagePreferenceManager = LanguagePreferenceManager(context)
+        // Load saved language preference
+        val savedLanguage = languagePreferenceManager?.getSavedLanguage() ?: AppLanguage.ENGLISH
+        println("MainViewModel: Loaded saved language: ${savedLanguage.displayName}")
+        _currentLanguage.value = savedLanguage
+        println("MainViewModel: Current language set to: ${_currentLanguage.value.displayName}")
     }
     
     private fun loadDummyData() {
@@ -102,12 +121,24 @@ class MainViewModel : ViewModel() {
     }
     
     fun logout() {
-        try {
-            _isLoggedIn.value = false
-            _currentUser.value = null
-            _selectedBus.value = null
-        } catch (e: Exception) {
-            // Handle logout error gracefully
+        viewModelScope.launch {
+            try {
+                // Sign out from Firebase Auth if user is signed in
+                if (firebaseAuthService.isUserSignedIn()) {
+                    firebaseAuthService.signOut()
+                }
+                
+                // Clear local state
+                _isLoggedIn.value = false
+                _currentUser.value = null
+                _selectedBus.value = null
+                
+            } catch (e: Exception) {
+                // Handle logout error gracefully - still clear local state
+                _isLoggedIn.value = false
+                _currentUser.value = null
+                _selectedBus.value = null
+            }
         }
     }
     
@@ -129,9 +160,24 @@ class MainViewModel : ViewModel() {
     
     fun setLanguage(language: AppLanguage) {
         try {
+            println("MainViewModel: Setting language to ${language.displayName}")
+            println("MainViewModel: Current language before change: ${_currentLanguage.value.displayName}")
+            
+            // Force StateFlow update
             _currentLanguage.value = language
+            
+            println("MainViewModel: Language value set to: ${_currentLanguage.value.displayName}")
+            
+            // Save to preferences
+            languagePreferenceManager?.saveLanguage(language)
+            
+            // Trigger callback
             _onLanguageChanged?.invoke(language)
+            
+            println("MainViewModel: Language set successfully")
         } catch (e: Exception) {
+            println("MainViewModel: Error setting language: ${e.message}")
+            e.printStackTrace()
             // Handle language change error gracefully
         }
     }
@@ -152,6 +198,14 @@ class MainViewModel : ViewModel() {
     fun setLocationPermission(granted: Boolean) {
         try {
             _locationPermissionGranted.value = granted
+        } catch (e: Exception) {
+            // Handle permission change error gracefully
+        }
+    }
+    
+    fun setNotificationPermission(granted: Boolean) {
+        try {
+            _notificationPermissionGranted.value = granted
         } catch (e: Exception) {
             // Handle permission change error gracefully
         }

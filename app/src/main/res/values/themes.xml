@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.UserPanelNew" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- NextStop App Theme -->
+    <style name="Theme.UserPanelNew" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Primary colors -->
+        <item name="android:colorPrimary">@color/nextstop_green</item>
+        <item name="android:colorPrimaryDark">@color/nextstop_green_dark</item>
+        <item name="android:colorAccent">@color/nextstop_blue</item>
+        
+        <!-- Background colors -->
+        <item name="android:colorBackground">@color/white</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">#424242</item>
+        
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/nextstop_green_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
 </resources>

@@ -200,7 +200,7 @@ fun SettingsScreen(
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = "About Bus Tracker",
+                            text = "About NextStop",
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -209,7 +209,7 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     Text(
-                        text = "Bus Tracker is a real-time bus tracking application that helps passengers locate buses, view ETAs, and track their journey. Built with Jetpack Compose and Material 3 design principles.",
+                        text = "NextStop is a real-time bus tracking application that helps passengers locate buses, view ETAs, and track their journey. Built with Jetpack Compose and Material 3 design principles.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

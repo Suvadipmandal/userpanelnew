@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- NextStop Brand Colors -->
+    <color name="nextstop_green_light">#81C784</color>
+    <color name="nextstop_green">#4CAF50</color>
+    <color name="nextstop_green_dark">#2E7D32</color>
+    
+    <color name="nextstop_blue_light">#64B5F6</color>
+    <color name="nextstop_blue">#2196F3</color>
+    <color name="nextstop_blue_dark">#1976D2</color>
+    
+    <color name="nextstop_orange_light">#FFB74D</color>
+    <color name="nextstop_orange">#FF9800</color>
+    <color name="nextstop_orange_dark">#F57C00</color>
+    
+    <!-- Legacy colors for compatibility -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>

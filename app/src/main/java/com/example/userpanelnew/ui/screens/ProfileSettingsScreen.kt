@@ -69,14 +69,16 @@ fun ProfileSettingsScreen(
         
         // Content based on selected tab
         when (selectedTab) {
-            0 -> ProfileTab(currentUser = currentUser)
+            0 -> ProfileTab(currentUser = currentUser, viewModel = viewModel)
             1 -> SettingsTab(viewModel = viewModel)
         }
     }
 }
 
 @Composable
-fun ProfileTab(currentUser: com.example.userpanelnew.models.User?) {
+fun ProfileTab(currentUser: com.example.userpanelnew.models.User?, viewModel: MainViewModel) {
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -146,11 +148,11 @@ fun ProfileTab(currentUser: com.example.userpanelnew.models.User?) {
                     
                     // Logout button
                     Button(
-                        onClick = { /* TODO: Implement logout */ },
+                        onClick = { showLogoutDialog = true },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer,
-                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError
                         )
                     ) {
                         Icon(
@@ -163,6 +165,46 @@ fun ProfileTab(currentUser: com.example.userpanelnew.models.User?) {
                     }
                 }
             }
+        }
+        
+        // Logout confirmation dialog
+        if (showLogoutDialog) {
+            AlertDialog(
+                onDismissRequest = { showLogoutDialog = false },
+                title = {
+                    Text(
+                        text = "Logout",
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Text(
+                        text = "Are you sure you want to logout?",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showLogoutDialog = false
+                            viewModel.logout()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Logout")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showLogoutDialog = false }
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     }
 }
@@ -250,7 +292,7 @@ fun SettingsTab(viewModel: MainViewModel) {
                 
                 InfoRow("Version", "1.0.0")
                 InfoRow("Build", "2024.1")
-                InfoRow("Developer", "Bus Tracker Team")
+                InfoRow("Developer", "NextStop Team")
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 

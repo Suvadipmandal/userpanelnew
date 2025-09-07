@@ -22,12 +22,14 @@ import androidx.compose.ui.zIndex
 import com.example.userpanelnew.models.Bus
 import com.example.userpanelnew.ui.components.*
 import com.example.userpanelnew.viewmodels.MainViewModel
+import com.example.userpanelnew.viewmodels.BusTrackingViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: MainViewModel,
+    onNavigateToTracking: (Bus) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val buses by viewModel.buses.collectAsState()
@@ -67,13 +69,14 @@ fun HomeScreen(
     val totalSearchResults = filteredBuses.size + filteredBusStops.size
     
     Box(modifier = modifier.fillMaxSize()) {
-        // Google Maps-style Mapbox Map with enhanced features
-        GoogleMapsStyleMapScreen(
+        // Enhanced Map with tracking capabilities
+        EnhancedMapScreen(
             buses = filteredBuses,
             selectedBus = selectedBus,
             onBusSelected = { bus -> viewModel.selectBus(bus) },
             shouldCenterOnUser = shouldCenterOnUser,
             onLocationCentered = { shouldCenterOnUser = false },
+            trackingViewModel = null, // No tracking in home screen
             modifier = Modifier.fillMaxSize()
         )
         
@@ -111,7 +114,7 @@ fun HomeScreen(
         EnhancedBusBottomSheet(
             bus = bus,
             onDismiss = { viewModel.clearSelectedBus() },
-            onTrackBus = { /* Track bus functionality */ }
+            onTrackBus = { onNavigateToTracking(bus) }
         )
     }
 }

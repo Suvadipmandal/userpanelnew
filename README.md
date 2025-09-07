@@ -1,4 +1,4 @@
-# 🚌 Bus Tracker - User Panel Android App
+# 🚌 NextStop - User Panel Android App
 
 A modern Android application built with Jetpack Compose and Material 3 design for bus passengers to track live buses, view ETAs, and manage their journey.
 

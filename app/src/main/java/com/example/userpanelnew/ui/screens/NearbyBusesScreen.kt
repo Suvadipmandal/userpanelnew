@@ -22,7 +22,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun NearbyBusesScreen(
     viewModel: MainViewModel,
-    onNavigateToHome: () -> Unit = {}
+    onNavigateToHome: () -> Unit = {},
+    onNavigateToTracking: (String) -> Unit = {} // New parameter for navigation to tracking
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
     var showTrackingMessage by remember { mutableStateOf(false) }
@@ -132,31 +133,8 @@ fun NearbyBusesScreen(
                 BusCard(
                     bus = bus,
                     onTrackBus = {
-                        // Convert BusInfo to Bus model and select it for tracking
-                        val busModel = Bus(
-                            id = bus.number,
-                            latitude = 22.3072, // Default coordinates - replace with real data
-                            longitude = 73.1812, // Default coordinates - replace with real data
-                            route = bus.destination,
-                            eta = bus.eta.replace(" min", "").toIntOrNull() ?: 0,
-                            speed = 35.0,
-                            lastUpdated = "Just now"
-                        )
-                        viewModel.selectBus(busModel)
-                        
-                        // Show tracking message and navigate to home
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = "Bus tracked!",
-                                duration = SnackbarDuration.Short
-                            )
-                        }
-                        
-                        // Navigate to home screen after a short delay to show the message
-                        scope.launch {
-                            delay(1500)
-                            onNavigateToHome()
-                        }
+                        // Navigate directly to tracking screen with bus ID
+                        onNavigateToTracking(bus.number)
                     }
                 )
             }
@@ -271,24 +249,24 @@ fun BusCard(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Track Bus Button
+                // Start Tracking Button
                 Button(
                     onClick = { onTrackBus() },
                     modifier = Modifier.height(32.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Icon(
-                        Icons.Default.LocationOn,
+                        Icons.Default.PlayArrow,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                                                    text = "Track Bus",
+                        text = "Start Tracking",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Medium
                     )

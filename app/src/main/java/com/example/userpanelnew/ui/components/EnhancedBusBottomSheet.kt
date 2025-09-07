@@ -24,7 +24,6 @@ fun EnhancedBusBottomSheet(
     onDismiss: () -> Unit,
     onTrackBus: () -> Unit
 ) {
-    var isTracking by remember { mutableStateOf(false) }
     
     // Pulsing animation for tracking state
     val infiniteTransition = rememberInfiniteTransition(label = "tracking")
@@ -123,10 +122,7 @@ fun EnhancedBusBottomSheet(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (isTracking) 
-                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = pulseAlpha)
-                    else 
-                        MaterialTheme.colorScheme.surfaceVariant
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -165,26 +161,7 @@ fun EnhancedBusBottomSheet(
                             }
                         }
                         
-                        // Live indicator
-                        if (isTracking) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(8.dp)
-                                        .clip(CircleShape)
-                                        .background(MaterialTheme.colorScheme.primary)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "LIVE",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
+                        // Live indicator (removed for now)
                     }
                     
                     Spacer(modifier = Modifier.height(16.dp))
@@ -258,16 +235,10 @@ fun EnhancedBusBottomSheet(
             ) {
                 // Track Bus Button
                 Button(
-                    onClick = {
-                        isTracking = !isTracking
-                        onTrackBus()
-                    },
+                    onClick = onTrackBus,
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isTracking) 
-                            MaterialTheme.colorScheme.secondary 
-                        else 
-                            MaterialTheme.colorScheme.primary
+                        containerColor = MaterialTheme.colorScheme.primary
                     ),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -275,13 +246,13 @@ fun EnhancedBusBottomSheet(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            if (isTracking) Icons.Default.Close else Icons.Default.PlayArrow,
+                            Icons.Default.PlayArrow,
                             contentDescription = null,
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = if (isTracking) "Stop Tracking" else "Track Bus",
+                            text = "Track Bus",
                             fontWeight = FontWeight.Medium
                         )
                     }

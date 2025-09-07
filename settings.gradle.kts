@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "user panel new"
+rootProject.name = "NextStop"
 include(":app")
  

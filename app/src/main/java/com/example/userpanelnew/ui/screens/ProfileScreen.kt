@@ -2,6 +2,7 @@ package com.example.userpanelnew.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -9,6 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.userpanelnew.models.AppLanguage
+import com.example.userpanelnew.ui.components.LanguageSelector
+import com.example.userpanelnew.utils.LocalizedStrings
 import com.example.userpanelnew.viewmodels.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -18,13 +22,29 @@ fun ProfileScreen(
     modifier: Modifier = Modifier
 ) {
     val currentUser by viewModel.currentUser.collectAsState()
+    val currentLanguage by viewModel.currentLanguage.collectAsState()
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    
+    // Debug: Log when ProfileScreen recomposes with new language
+    LaunchedEffect(currentLanguage) {
+        println("ProfileScreen: Language changed to ${currentLanguage.displayName}")
+    }
     
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         // Header
         TopAppBar(
-            title = { Text("Profile") }
+            title = { 
+                Column {
+                    Text(LocalizedStrings.getString("profile", currentLanguage))
+                    Text(
+                        text = "Current: ${currentLanguage.displayName}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         )
         
         if (currentUser == null) {
@@ -80,7 +100,7 @@ fun ProfileScreen(
                         )
                         
                         Text(
-                            text = "Bus Tracker User",
+                            text = "NextStop User",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
                         )
@@ -88,6 +108,58 @@ fun ProfileScreen(
                 }
                 
                 Spacer(modifier = Modifier.height(24.dp))
+                
+                // Language Settings
+                LanguageSelector(
+                    currentLanguage = currentLanguage,
+                    onLanguageSelected = { language ->
+                        println("ProfileScreen: Language selected: ${language.displayName}")
+                        viewModel.setLanguage(language)
+                        println("ProfileScreen: Language set in ViewModel")
+                    }
+                )
+                
+                // Debug info
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = "DEBUG INFO:",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text("Current Language: ${currentLanguage.displayName}")
+                        Text("Language Code: ${currentLanguage.code}")
+                        Text("Profile Text: ${LocalizedStrings.getString("profile", currentLanguage)}")
+                    }
+                }
+                
+                // Test button for debugging
+                Button(
+                    onClick = {
+                        val nextLanguage = when (currentLanguage) {
+                            AppLanguage.ENGLISH -> AppLanguage.HINDI
+                            AppLanguage.HINDI -> AppLanguage.GUJARATI
+                            AppLanguage.GUJARATI -> AppLanguage.MARATHI
+                            AppLanguage.MARATHI -> AppLanguage.TELUGU
+                            AppLanguage.TELUGU -> AppLanguage.BENGALI
+                            AppLanguage.BENGALI -> AppLanguage.ENGLISH
+                        }
+                        println("ProfileScreen: Test button clicked, switching to: ${nextLanguage.displayName}")
+                        viewModel.setLanguage(nextLanguage)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Test Language Change: ${currentLanguage.displayName}")
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
                 
                 // User details
                 Card(
@@ -111,7 +183,7 @@ fun ProfileScreen(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = "Email",
+                                    text = LocalizedStrings.getString("email", currentLanguage),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -124,7 +196,7 @@ fun ProfileScreen(
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
-                        Divider()
+                        HorizontalDivider()
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
@@ -143,7 +215,7 @@ fun ProfileScreen(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = "Phone",
+                                    text = LocalizedStrings.getString("phone", currentLanguage),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -156,7 +228,7 @@ fun ProfileScreen(
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
-                        Divider()
+                        HorizontalDivider()
                         
                         Spacer(modifier = Modifier.height(16.dp))
                         
@@ -175,7 +247,7 @@ fun ProfileScreen(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = "User ID",
+                                    text = LocalizedStrings.getString("user_id", currentLanguage),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -192,21 +264,61 @@ fun ProfileScreen(
                 
                 // Logout button
                 Button(
-                    onClick = { viewModel.logout() },
+                    onClick = { showLogoutDialog = true },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.error
                     )
                 ) {
                     Icon(
-                        Icons.Default.ExitToApp,
+                        Icons.AutoMirrored.Filled.ExitToApp,
                         contentDescription = null,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Logout")
+                    Text(LocalizedStrings.getString("logout", currentLanguage))
                 }
             }
+        }
+        
+        // Logout confirmation dialog
+        if (showLogoutDialog) {
+            AlertDialog(
+                onDismissRequest = { showLogoutDialog = false },
+                title = {
+                    Text(
+                        text = LocalizedStrings.getString("logout", currentLanguage),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Text(
+                        text = "Are you sure you want to logout?",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showLogoutDialog = false
+                            viewModel.logout()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text(LocalizedStrings.getString("logout", currentLanguage))
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showLogoutDialog = false }
+                    ) {
+                        Text("Cancel")
+                    }
+                }
+            )
         }
     }
 }

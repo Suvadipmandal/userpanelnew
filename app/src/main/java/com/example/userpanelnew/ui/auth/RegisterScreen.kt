@@ -36,7 +36,7 @@ fun RegisterScreen(
     ) {
         // App Logo/Title
         Text(
-            text = "🚌 Bus Tracker",
+            text = "NextStop",
             style = MaterialTheme.typography.displayMedium,
             color = MaterialTheme.colorScheme.primary
         )

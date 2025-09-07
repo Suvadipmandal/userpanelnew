@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".UserPanelApplication"
@@ -41,6 +42,11 @@
             android:exported="false"
             android:label="Map Demo"
             android:theme="@style/Theme.UserPanelNew" />
+        
+        <!-- Bus Tracking Notification Receiver -->
+        <receiver
+            android:name=".services.BusTrackingNotificationReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>
