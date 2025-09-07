@@ -131,17 +131,17 @@ fun MainApp() {
 
             }
             
-            // Enhanced Bottom Navigation Bar with proper text visibility
+            // Enhanced Bottom Navigation Bar with Google Maps-like styling
             NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.98f),
-                tonalElevation = 12.dp,
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+                tonalElevation = 16.dp,
                 modifier = Modifier
                     .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.08f),
-                        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                        width = 0.5.dp,
+                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f),
+                        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
                     )
-                    .padding(top = 8.dp, bottom = 8.dp)
+                    .padding(top = 12.dp, bottom = 12.dp)
             ) {
                 // Navigation items
                 NavigationBarItem(
@@ -173,7 +173,7 @@ fun MainApp() {
                         selectedTextColor = MaterialTheme.colorScheme.primary,
                         unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
                     )
                 )
                 
@@ -183,7 +183,7 @@ fun MainApp() {
                     alwaysShowLabel = true,
                     icon = { 
                         Icon(
-                            Icons.Default.LocationOn, 
+                            Icons.Default.Place, 
                             contentDescription = null,
                             modifier = Modifier.size(24.dp)
                         ) 
@@ -206,7 +206,7 @@ fun MainApp() {
                         selectedTextColor = MaterialTheme.colorScheme.primary,
                         unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
                     )
                 )
                 
@@ -239,7 +239,7 @@ fun MainApp() {
                         selectedTextColor = MaterialTheme.colorScheme.primary,
                         unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
                     )
                 )
                 
@@ -272,7 +272,7 @@ fun MainApp() {
                         selectedTextColor = MaterialTheme.colorScheme.primary,
                         unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f)
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
                     )
                 )
             }

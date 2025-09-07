@@ -1,6 +1,7 @@
 package com.example.userpanelnew
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.userpanelnew.ui.MainApp
 import com.example.userpanelnew.ui.theme.UserPanelNewTheme
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +30,32 @@ class MainActivity : ComponentActivity() {
                 throw throwable
             }
         }
+        
+        // --- START: FIREBASE CONNECTION TEST ---
+        try {
+            // Test Firebase Database connection
+            val database = FirebaseDatabase.getInstance()
+            val myRef = database.getReference("connectionTest")
+            
+            Log.d("FirebaseTest", "Testing Firebase Database connection...")
+            
+            myRef.setValue("Hello, Firebase! I am connected at ${System.currentTimeMillis()}")
+                .addOnSuccessListener {
+                    Log.d("FirebaseTest", "✅ SUCCESS: Wrote to Firebase Database!")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("FirebaseTest", "❌ FAILURE: Could not write to Firebase Database.", e)
+                }
+            
+            // Test Firebase Auth connection
+            val auth = FirebaseAuth.getInstance()
+            Log.d("FirebaseTest", "✅ Firebase Auth initialized")
+            Log.d("FirebaseTest", "Current user: ${auth.currentUser?.email ?: "No user signed in"}")
+            
+        } catch (e: Exception) {
+            Log.e("FirebaseTest", "❌ Firebase initialization failed", e)
+        }
+        // --- END: FIREBASE CONNECTION TEST ---
         
         enableEdgeToEdge()
         setContent {
