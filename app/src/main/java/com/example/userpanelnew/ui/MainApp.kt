@@ -20,8 +20,6 @@ import android.widget.Toast
 import com.example.userpanelnew.navigation.Screen
 import com.example.userpanelnew.ui.auth.LoginScreen
 import com.example.userpanelnew.ui.auth.RegisterScreen
-import com.example.userpanelnew.ui.components.PermissionDialog
-import com.example.userpanelnew.ui.components.NotificationPermissionDialog
 import com.example.userpanelnew.ui.screens.*
 import com.example.userpanelnew.utils.LocalizationHelper
 import com.example.userpanelnew.utils.NavigationEventBus
@@ -74,6 +72,8 @@ fun MainApp() {
             android.Manifest.permission.ACCESS_COARSE_LOCATION
         ) == android.content.pm.PackageManager.PERMISSION_GRANTED
         
+        println("DEBUG: Location permissions - Fine: $hasFineLocation, Coarse: $hasCoarseLocation")
+        
         if (hasFineLocation || hasCoarseLocation) {
             viewModel.setLocationPermission(true)
         }
@@ -83,6 +83,8 @@ fun MainApp() {
             context,
             android.Manifest.permission.POST_NOTIFICATIONS
         ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        
+        println("DEBUG: Notification permission: $hasNotificationPermission")
         
         if (hasNotificationPermission) {
             viewModel.setNotificationPermission(true)
@@ -95,6 +97,7 @@ fun MainApp() {
     ) { permissions ->
         val locationGranted = permissions[android.Manifest.permission.ACCESS_FINE_LOCATION] == true ||
                 permissions[android.Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        println("DEBUG: Location permission result: $locationGranted")
         viewModel.setLocationPermission(locationGranted)
         if (locationGranted) {
             Toast.makeText(context, "Location access granted! You can now track buses.", Toast.LENGTH_LONG).show()
@@ -107,6 +110,7 @@ fun MainApp() {
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
+        println("DEBUG: Notification permission result: $isGranted")
         viewModel.setNotificationPermission(isGranted)
         if (isGranted) {
             Toast.makeText(context, "Notifications enabled! You'll receive bus updates.", Toast.LENGTH_LONG).show()
@@ -115,25 +119,6 @@ fun MainApp() {
         }
     }
     
-    // Show permission dialog only if permissions are not granted
-    LaunchedEffect(locationPermissionGranted) {
-        if (!locationPermissionGranted) {
-            // Check again to make sure we have the latest permission status
-            val hasFineLocation = androidx.core.content.ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-            
-            val hasCoarseLocation = androidx.core.content.ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-            
-            if (hasFineLocation || hasCoarseLocation) {
-                viewModel.setLocationPermission(true)
-            }
-        }
-    }
     
     if (!isLoggedIn) {
         // Authentication flow
@@ -179,30 +164,72 @@ fun MainApp() {
                     trackingBusId = ""
                 }
             )
-        } else {
-            // Normal app with navigation bar
-            Column(modifier = Modifier.fillMaxSize()) {
-                // Content area
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                ) {
-                    when (selectedScreen) {
-                        Screen.Home -> HomeScreen(viewModel = viewModel)
-                        Screen.Stops -> StopsScreen(viewModel = viewModel)
-                        Screen.NearbyBuses -> NearbyBusesScreen(
-                            viewModel = viewModel,
-                            onNavigateToHome = { selectedScreen = Screen.Home },
-                            onNavigateToTracking = { busId ->
-                                trackingBusId = busId
-                                showBusTracking = true
-                            }
-                        )
-                        Screen.ProfileSettings -> ProfileSettingsScreen(viewModel = viewModel)
-                        else -> HomeScreen(viewModel = viewModel)
-                    }
-                }
+         } else {
+             // Normal app with navigation bar
+             Column(modifier = Modifier.fillMaxSize()) {
+                 // Permission status indicator (for debugging)
+                 if (!locationPermissionGranted || !notificationPermissionGranted) {
+                     Card(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .padding(8.dp),
+                         colors = CardDefaults.cardColors(
+                             containerColor = MaterialTheme.colorScheme.errorContainer
+                         )
+                     ) {
+                         Row(
+                             modifier = Modifier.padding(16.dp),
+                             verticalAlignment = Alignment.CenterVertically
+                         ) {
+                             Icon(
+                                 Icons.Default.Warning,
+                                 contentDescription = null,
+                                 tint = MaterialTheme.colorScheme.onErrorContainer
+                             )
+                             Spacer(modifier = Modifier.width(8.dp))
+                             Text(
+                                 text = "Permissions needed: Location: $locationPermissionGranted, Notifications: $notificationPermissionGranted",
+                                 style = MaterialTheme.typography.bodySmall,
+                                 color = MaterialTheme.colorScheme.onErrorContainer
+                             )
+                         }
+                     }
+                 }
+                 
+                 // Content area
+                 Box(
+                     modifier = Modifier
+                         .fillMaxSize()
+                         .weight(1f)
+                 ) {
+                     when (selectedScreen) {
+                         Screen.Home -> HomeScreen(
+                             viewModel = viewModel,
+                             onRequestLocationPermission = {
+                                 locationPermissionLauncher.launch(
+                                     arrayOf(
+                                         android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                         android.Manifest.permission.ACCESS_COARSE_LOCATION
+                                     )
+                                 )
+                             },
+                             onRequestNotificationPermission = {
+                                 notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                             }
+                         )
+                         Screen.Stops -> StopsScreen(viewModel = viewModel)
+                         Screen.NearbyBuses -> NearbyBusesScreen(
+                             viewModel = viewModel,
+                             onNavigateToHome = { selectedScreen = Screen.Home },
+                             onNavigateToTracking = { busId ->
+                                 trackingBusId = busId
+                                 showBusTracking = true
+                             }
+                         )
+                         Screen.ProfileSettings -> ProfileSettingsScreen(viewModel = viewModel)
+                         else -> HomeScreen(viewModel = viewModel)
+                     }
+                 }
                 
                 // Enhanced Bottom Navigation Bar with Google Maps-like styling
                 NavigationBar(
@@ -352,33 +379,49 @@ fun MainApp() {
             }
         }
     
-    // Permission Dialogs
-    if (!locationPermissionGranted) {
-        PermissionDialog(
-            onAllow = {
-                locationPermissionLauncher.launch(
-                    arrayOf(
-                        android.Manifest.permission.ACCESS_FINE_LOCATION,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION
-                    )
-                )
-            },
-            onDeny = {
-                viewModel.setLocationPermission(false)
-            }
-        )
-    }
-    
-    // Show notification permission dialog after location permission is granted
-    if (locationPermissionGranted && !notificationPermissionGranted) {
-        NotificationPermissionDialog(
-            onAllow = {
-                notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            },
-            onDeny = {
-                viewModel.setNotificationPermission(false)
-            }
-        )
-    }
+     // Simple permission request logic
+     LaunchedEffect(Unit) {
+         // Small delay to ensure UI is ready
+         kotlinx.coroutines.delay(1000)
+         
+         println("DEBUG: Starting permission check - Location: $locationPermissionGranted, Notification: $notificationPermissionGranted")
+         
+         // Request location permission first if not granted
+         if (!locationPermissionGranted) {
+             println("DEBUG: Requesting location permission")
+             locationPermissionLauncher.launch(
+                 arrayOf(
+                     android.Manifest.permission.ACCESS_FINE_LOCATION,
+                     android.Manifest.permission.ACCESS_COARSE_LOCATION
+                 )
+             )
+         }
+     }
+     
+     // Manual permission request fallback
+     LaunchedEffect(Unit) {
+         // If permissions are still not granted after 3 seconds, try again
+         kotlinx.coroutines.delay(3000)
+         
+         if (!locationPermissionGranted) {
+             println("DEBUG: Fallback - Requesting location permission again")
+             locationPermissionLauncher.launch(
+                 arrayOf(
+                     android.Manifest.permission.ACCESS_FINE_LOCATION,
+                     android.Manifest.permission.ACCESS_COARSE_LOCATION
+                 )
+             )
+         }
+     }
+     
+     // Request notification permission after location is granted
+     LaunchedEffect(locationPermissionGranted) {
+         if (locationPermissionGranted && !notificationPermissionGranted) {
+             // Small delay to ensure location permission is fully processed
+             kotlinx.coroutines.delay(500)
+             println("DEBUG: Requesting notification permission")
+             notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+         }
+     }
     }
 }

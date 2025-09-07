@@ -30,6 +30,8 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     viewModel: MainViewModel,
     onNavigateToTracking: (Bus) -> Unit = {},
+    onRequestLocationPermission: (() -> Unit)? = null,
+    onRequestNotificationPermission: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val buses by viewModel.buses.collectAsState()
@@ -106,6 +108,27 @@ fun HomeScreen(
                 .padding(16.dp)
                 .zIndex(1f)
         )
+        
+        // Permission request button (for debugging)
+        if (onRequestLocationPermission != null || onRequestNotificationPermission != null) {
+            FloatingActionButton(
+                onClick = {
+                    onRequestLocationPermission?.invoke()
+                    onRequestNotificationPermission?.invoke()
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp)
+                    .zIndex(1f),
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Icon(
+                    Icons.Default.LocationOn,
+                    contentDescription = "Request Permissions"
+                )
+            }
+        }
         
     }
     

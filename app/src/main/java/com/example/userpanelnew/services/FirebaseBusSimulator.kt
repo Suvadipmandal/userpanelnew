@@ -217,3 +217,4 @@ class FirebaseBusSimulator {
                 "Current: ${currentRouteIndex + 1}/${vadodaraRoute.size}"
     }
 }
+

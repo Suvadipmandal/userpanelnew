@@ -103,7 +103,7 @@ The NextStop logo features:
 ### Icon Sizes
 - **Launcher Icon**: 108x108dp (adaptive)
 - **Notification Icon**: 24x24dp
-- **In-App Icon**: 24x24dp
+- **In-App Icon**: 24x24dp§
 - **Marketing Logo**: Scalable vector
 
 ### File Formats
