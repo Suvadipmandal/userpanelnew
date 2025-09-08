@@ -203,20 +203,9 @@ fun MainApp() {
                          .weight(1f)
                  ) {
                      when (selectedScreen) {
-                         Screen.Home -> HomeScreen(
-                             viewModel = viewModel,
-                             onRequestLocationPermission = {
-                                 locationPermissionLauncher.launch(
-                                     arrayOf(
-                                         android.Manifest.permission.ACCESS_FINE_LOCATION,
-                                         android.Manifest.permission.ACCESS_COARSE_LOCATION
-                                     )
-                                 )
-                             },
-                             onRequestNotificationPermission = {
-                                 notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-                             }
-                         )
+                        Screen.Home -> HomeScreen(
+                            viewModel = viewModel
+                        )
                          Screen.Stops -> StopsScreen(viewModel = viewModel)
                          Screen.NearbyBuses -> NearbyBusesScreen(
                              viewModel = viewModel,

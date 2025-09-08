@@ -103,3 +103,4 @@ Text(LocalizedStrings.getString("hello_world", currentLanguage))
 - Add language-specific date/time formatting
 - Support for custom fonts per language
 
+
