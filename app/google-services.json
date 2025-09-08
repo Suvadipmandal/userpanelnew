@@ -13,7 +13,12 @@
           "package_name": "com.example.busdriverpanel"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "23991952685-b3qeorbcev63j70sol79r1j5vev6jdm0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBkUusEej2vlYMWjdSivHv4T4sF8fiF9FU"
@@ -21,7 +26,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23991952685-b3qeorbcev63j70sol79r1j5vev6jdm0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -32,7 +42,20 @@
           "package_name": "com.example.userpanelnew"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "23991952685-9c8468q0j6s8ei82ulltjsa78dilfeob.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.userpanelnew",
+            "certificate_hash": "c310260f5643cde9876630ce352dbe60c0af1af1"
+          }
+        },
+        {
+          "client_id": "23991952685-b3qeorbcev63j70sol79r1j5vev6jdm0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBkUusEej2vlYMWjdSivHv4T4sF8fiF9FU"
@@ -40,7 +63,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23991952685-b3qeorbcev63j70sol79r1j5vev6jdm0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

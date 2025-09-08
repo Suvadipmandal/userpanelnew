@@ -3,6 +3,7 @@ package com.example.userpanelnew.services
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.tasks.await
 
@@ -96,6 +97,28 @@ class FirebaseAuthService {
             Result.success(Unit)
         } catch (e: Exception) {
             Log.e("FirebaseAuth", "Password reset failed: ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun signInWithGoogle(idToken: String): Result<FirebaseUser> {
+        return try {
+            Log.d("FirebaseAuth", "Starting Google sign in")
+            
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val result = auth.signInWithCredential(credential).await()
+            val user = result.user
+            
+            if (user != null) {
+                Log.d("FirebaseAuth", "Google sign in successful: ${user.uid}")
+                Result.success(user)
+            } else {
+                Log.e("FirebaseAuth", "Google sign in failed: user is null")
+                Result.failure(Exception("Google sign in failed"))
+            }
+            
+        } catch (e: Exception) {
+            Log.e("FirebaseAuth", "Google sign in failed: ${e.message}", e)
             Result.failure(e)
         }
     }

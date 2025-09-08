@@ -1,15 +1,19 @@
 package com.example.userpanelnew.ui.auth
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.userpanelnew.ui.components.GoogleSignInButton
 import com.example.userpanelnew.viewmodels.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,7 +26,26 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+    var isGoogleLoading by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
+    
+    val context = LocalContext.current
+    
+    // Google Sign-In launcher
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        isGoogleLoading = false
+        android.util.Log.d("LoginScreen", "Google Sign-In result: ${result.resultCode}")
+        
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            android.util.Log.d("LoginScreen", "Google Sign-In result OK, processing...")
+            viewModel.handleGoogleSignInResult(result.data)
+        } else {
+            android.util.Log.e("LoginScreen", "Google Sign-In failed with result code: ${result.resultCode}")
+            showError = true
+        }
+    }
     
     Column(
         modifier = Modifier
@@ -80,7 +103,7 @@ fun LoginScreen(
         if (showError) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Please fill in all fields",
+                text = "Login failed. Please try again.",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -95,7 +118,7 @@ fun LoginScreen(
                     isLoading = true
                     showError = false
                     if (viewModel.login(email, password)) {
-                        onLoginSuccess()
+                        // Success will be handled by state change
                     } else {
                         showError = true
                         isLoading = false
@@ -116,6 +139,47 @@ fun LoginScreen(
                 Text("Sign In")
             }
         }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Divider
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            HorizontalDivider(
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+            )
+            Text(
+                text = "OR",
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            HorizontalDivider(
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Google Sign-In Button
+        GoogleSignInButton(
+            onClick = {
+                isGoogleLoading = true
+                showError = false
+                val signInIntent = viewModel.getGoogleSignInIntent()
+                if (signInIntent != null) {
+                    googleSignInLauncher.launch(signInIntent)
+                } else {
+                    isGoogleLoading = false
+                    showError = true
+                }
+            },
+            isLoading = isGoogleLoading
+        )
         
         Spacer(modifier = Modifier.height(16.dp))
         

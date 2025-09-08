@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.userpanelnew.data.DummyDataRepository
 import com.example.userpanelnew.models.*
 import com.example.userpanelnew.services.FirebaseAuthService
+import com.example.userpanelnew.services.GoogleSignInService
 import com.example.userpanelnew.utils.LanguagePreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,7 @@ class MainViewModel : ViewModel() {
     
     private val repository = DummyDataRepository()
     private val firebaseAuthService = FirebaseAuthService()
+    private var googleSignInService: GoogleSignInService? = null
     private var languagePreferenceManager: LanguagePreferenceManager? = null
     
     // Authentication state
@@ -65,6 +67,11 @@ class MainViewModel : ViewModel() {
     fun initializeLanguagePreferenceManager(context: Context) {
         println("MainViewModel: Initializing language preference manager")
         languagePreferenceManager = LanguagePreferenceManager(context)
+        googleSignInService = GoogleSignInService(context)
+        
+        // Debug: Log Google Sign-In service initialization
+        android.util.Log.d("MainViewModel", "Google Sign-In service initialized: ${googleSignInService != null}")
+        
         // Load saved language preference
         val savedLanguage = languagePreferenceManager?.getSavedLanguage() ?: AppLanguage.ENGLISH
         println("MainViewModel: Loaded saved language: ${savedLanguage.displayName}")
@@ -227,6 +234,58 @@ class MainViewModel : ViewModel() {
                 _busStops.value = repository.getBusStopsWithDelay()
             } catch (e: Exception) {
                 // Handle refresh error gracefully
+            }
+        }
+    }
+    
+    fun getGoogleSignInIntent(): android.content.Intent? {
+        return googleSignInService?.getSignInIntent()
+    }
+    
+    fun handleGoogleSignInResult(data: android.content.Intent?) {
+        if (googleSignInService == null) {
+            android.util.Log.e("MainViewModel", "GoogleSignInService is null")
+            return
+        }
+        
+        viewModelScope.launch {
+            try {
+                android.util.Log.d("MainViewModel", "Handling Google Sign-In result")
+                
+                val idTokenResult = googleSignInService!!.handleSignInResult(data)
+                if (idTokenResult.isSuccess) {
+                    val idToken = idTokenResult.getOrNull()
+                    if (idToken != null) {
+                        android.util.Log.d("MainViewModel", "Got ID token, authenticating with Firebase")
+                        
+                        val firebaseResult = firebaseAuthService.signInWithGoogle(idToken)
+                        if (firebaseResult.isSuccess) {
+                            val firebaseUser = firebaseResult.getOrNull()
+                            if (firebaseUser != null) {
+                                android.util.Log.d("MainViewModel", "Firebase authentication successful")
+                                
+                                // Create user object from Firebase user
+                                _currentUser.value = User(
+                                    id = firebaseUser.uid,
+                                    name = firebaseUser.displayName ?: "Google User",
+                                    email = firebaseUser.email ?: "",
+                                    phone = firebaseUser.phoneNumber ?: ""
+                                )
+                                _isLoggedIn.value = true
+                            } else {
+                                android.util.Log.e("MainViewModel", "Firebase user is null")
+                            }
+                        } else {
+                            android.util.Log.e("MainViewModel", "Firebase authentication failed: ${firebaseResult.exceptionOrNull()?.message}")
+                        }
+                    } else {
+                        android.util.Log.e("MainViewModel", "ID token is null")
+                    }
+                } else {
+                    android.util.Log.e("MainViewModel", "Google Sign-In failed: ${idTokenResult.exceptionOrNull()?.message}")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("MainViewModel", "Error in Google Sign-In flow: ${e.message}", e)
             }
         }
     }
